@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/slaveeks/golang_meetup/src/models"
 )
@@ -11,7 +10,6 @@ type memberController struct {
 }
 
 func (m *memberController) Create(ctx echo.Context) error {
-	fmt.Println("123")
 	name := ctx.QueryParam("name")
 	email := ctx.QueryParam("email")
 	res, _ := m.model.Create(name, email)
@@ -27,7 +25,6 @@ func (m *memberController) Delete(ctx echo.Context) error {
 }
 
 func (m *memberController) FindAll(ctx echo.Context) error {
-	fmt.Println("123")
 	res, _ := m.model.FindAll()
 
 	return ctx.JSON(200, res)
