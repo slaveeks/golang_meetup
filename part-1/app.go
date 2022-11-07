@@ -8,7 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 	"net/http"
 )
 
@@ -31,7 +30,7 @@ func main() {
 		err := cursor.All(ctx, &m)
 
 		if err != nil {
-			log.Fatal(err)
+			return c.JSON(http.StatusInternalServerError, err)
 		}
 
 		return c.JSON(http.StatusOK, &m)
@@ -48,7 +47,7 @@ func main() {
 		_, err := collection.InsertOne(ctx, m)
 
 		if err != nil {
-			log.Fatal(err)
+			return c.JSON(http.StatusInternalServerError, err)
 		}
 
 		return c.JSON(http.StatusOK, &m)
@@ -64,13 +63,13 @@ func main() {
 		result := collection.FindOneAndDelete(ctx, filter)
 
 		if result.Err() != nil {
-			log.Fatal(result.Err())
+			return c.JSON(http.StatusNotFound, result.Err().Error())
 		}
 
 		err := result.Decode(&m)
 
 		if err != nil {
-			log.Fatal(err)
+			return c.JSON(http.StatusInternalServerError, err)
 		}
 
 		return c.JSON(http.StatusOK, &m)
@@ -86,13 +85,13 @@ func main() {
 		result := collection.FindOne(ctx, filter)
 
 		if result.Err() != nil {
-			log.Fatal(result.Err())
+			return c.JSON(http.StatusNotFound, result.Err().Error())
 		}
 
 		err := result.Decode(&m)
 
 		if err != nil {
-			log.Fatal(err)
+			return c.JSON(http.StatusInternalServerError, err)
 		}
 
 		return c.JSON(http.StatusOK, &m)
