@@ -50,7 +50,7 @@ func main() {
 			return c.JSON(http.StatusInternalServerError, err)
 		}
 
-		return c.JSON(http.StatusOK, &m)
+		return c.JSON(http.StatusCreated, &m)
 	})
 
 	e.DELETE("/members/:id", func(c echo.Context) error {
