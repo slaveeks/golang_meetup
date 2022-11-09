@@ -13,7 +13,7 @@ import (
 func main() {
 	e := echo.New()
 
-	database, _ := client.CreateClient("localhost", "27017", "meetup")
+	database, _ := client.CreateClient("mongo", "27017", "meetup")
 
 	memberModel := models.CreateMemberModel("members", database, context.TODO())
 
