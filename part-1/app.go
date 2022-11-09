@@ -25,9 +25,13 @@ func main() {
 
 	e.GET("/members", func(c echo.Context) error {
 		var m []*member
-		cursor, _ := collection.Find(ctx, bson.D{})
+		cursor, err := collection.Find(ctx, bson.D{})
 
-		err := cursor.All(ctx, &m)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err)
+		}
+
+		err = cursor.All(ctx, &m)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err)
@@ -57,7 +61,12 @@ func main() {
 		id := c.Param("id")
 		var m *member
 
-		oid, _ := primitive.ObjectIDFromHex(id)
+		oid, err := primitive.ObjectIDFromHex(id)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err)
+		}
+
 		filter := bson.M{"_id": oid}
 
 		result := collection.FindOneAndDelete(ctx, filter)
@@ -66,7 +75,7 @@ func main() {
 			return c.JSON(http.StatusNotFound, result.Err().Error())
 		}
 
-		err := result.Decode(&m)
+		err = result.Decode(&m)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err)
@@ -79,7 +88,12 @@ func main() {
 		id := c.Param("id")
 		var m *member
 
-		oid, _ := primitive.ObjectIDFromHex(id)
+		oid, err := primitive.ObjectIDFromHex(id)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err)
+		}
+
 		filter := bson.M{"_id": oid}
 
 		result := collection.FindOne(ctx, filter)
@@ -88,7 +102,7 @@ func main() {
 			return c.JSON(http.StatusNotFound, result.Err().Error())
 		}
 
-		err := result.Decode(&m)
+		err = result.Decode(&m)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err)
