@@ -2,10 +2,10 @@ package models
 
 import (
 	"context"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 )
 
 type member struct {
@@ -28,7 +28,8 @@ func (mm *MemberModel) Create(name, email string) (*member, error) {
 	_, err := mm.collection.InsertOne(mm.ctx, m)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to create member: %v", err)
+		log.Println("Error, while inserting data")
+		return nil, err
 	}
 
 	return &m, nil
@@ -37,19 +38,30 @@ func (mm *MemberModel) Create(name, email string) (*member, error) {
 func (mm *MemberModel) FindById(id string) (*member, error) {
 	var m *member
 
-	oid, _ := primitive.ObjectIDFromHex(id)
+	oid, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		log.Println("Error while converting hex to ObjectId")
+
+		return nil, err
+	}
+
 	filter := bson.M{"_id": oid}
 
 	result := mm.collection.FindOne(mm.ctx, filter)
 
 	if result.Err() != nil {
-		return nil, fmt.Errorf("error to find data by id: %s", id)
+		log.Printf("Error to find data by id: %s", result.Err())
+
+		return nil, err
 	}
 
-	err := result.Decode(&m)
+	err = result.Decode(&m)
 
 	if err != nil {
-		return nil, fmt.Errorf("error while decoding data from database: %s", err)
+		log.Println("Error while decoding data from database")
+
+		return nil, err
 	}
 
 	return m, nil
@@ -62,7 +74,9 @@ func (mm *MemberModel) FindAll() ([]*member, error) {
 	err := cursor.All(mm.ctx, &m)
 
 	if err != nil {
-		return nil, fmt.Errorf("error while decoding data from database: %s", err)
+		log.Println("Error while decoding data from database")
+
+		return nil, err
 	}
 
 	return m, nil
@@ -71,19 +85,30 @@ func (mm *MemberModel) FindAll() ([]*member, error) {
 func (mm *MemberModel) Delete(id string) (*member, error) {
 	var m *member
 
-	oid, _ := primitive.ObjectIDFromHex(id)
+	oid, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		log.Println("Error while converting hex to ObjectId")
+
+		return nil, err
+	}
+
 	filter := bson.M{"_id": oid}
 
 	result := mm.collection.FindOneAndDelete(mm.ctx, filter)
 
 	if result.Err() != nil {
-		return nil, fmt.Errorf("error to find and delete data by id: %s", id)
+		log.Printf("Error to find data by id: %s\n", result.Err())
+
+		return nil, err
 	}
 
-	err := result.Decode(&m)
+	err = result.Decode(&m)
 
 	if err != nil {
-		return nil, fmt.Errorf("error while decoding data from database: %s", err)
+		log.Println("Error while decoding data from database")
+
+		return nil, err
 	}
 
 	return m, nil

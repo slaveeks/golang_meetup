@@ -21,7 +21,7 @@ func main() {
 
 	ctx := context.TODO()
 
-	collection := connectToDatabase("localhost", "27017", "meetup", "members")
+	collection := connectToDatabase("mongo", "27017", "meetup", "members")
 
 	e.GET("/members", func(c echo.Context) error {
 		var m []*member

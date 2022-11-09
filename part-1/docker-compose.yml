@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    ports:
+      - "1323:1323"
+    restart: on-failure
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
