@@ -8,6 +8,8 @@ COPY go.sum ./
 RUN go mod download
 
 COPY ./*.go ./
+COPY ./src ./src
+COPY ./pkg ./pkg
 
 RUN go build -o /meetup
 
